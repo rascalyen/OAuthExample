@@ -21,16 +21,14 @@ import retrofit2.Response;
 
 public class OAuthWebViewClient extends WebViewClient {
 
-    private Context context;
     private AuthAPI authAPI;
     private ProfileAPI profileAPI;
 
 
     OAuthWebViewClient(Context context) {
-        this.context = context;
-        authAPI = OAuthApp.getRetroBuilder(this.context).baseUrl(BuildConfig.AUTH_URL)
+        authAPI = OAuthApp.getRetroBuilder(context).baseUrl(BuildConfig.AUTH_URL)
                 .build().create(AuthAPI.class);
-        profileAPI = OAuthApp.getRetroBuilder(this.context).baseUrl(BuildConfig.PROFILE_URL)
+        profileAPI = OAuthApp.getRetroBuilder(context).baseUrl(BuildConfig.PROFILE_URL)
                 .build().create(ProfileAPI.class);
     }
 
@@ -53,7 +51,7 @@ public class OAuthWebViewClient extends WebViewClient {
 
                             JSONObject json = new JSONObject(response.body().string());
                             String tokenStr = json.getString("access_token");
-                            findUserAccount(tokenStr);
+                            findUserAccount(tokenStr, view);
 
                             Log.i("##########", "Token : " + tokenStr);
                         }
@@ -73,7 +71,7 @@ public class OAuthWebViewClient extends WebViewClient {
 
     }
 
-    private void findUserAccount(String tokenStr) {
+    private void findUserAccount(String tokenStr, WebView view) {
 
         profileAPI.getUserAccount(tokenStr).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -82,8 +80,9 @@ public class OAuthWebViewClient extends WebViewClient {
                     if (response.isSuccessful()) {
 
                         String profileStr = response.body().string();
-                        if (context instanceof MainActivity) {
-                            ((MainActivity) context).updateText(profileStr);
+
+                        if (view.getContext() instanceof MainActivity) {
+                            ((MainActivity) view.getContext()).updateText(profileStr);
                         }
 
                         Log.i("##########", "Result : " + profileStr);
