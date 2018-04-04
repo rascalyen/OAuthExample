@@ -1,5 +1,6 @@
 package com.sample.oauthexercise.ui;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -20,16 +21,16 @@ import retrofit2.Response;
 
 public class OAuthWebViewClient extends WebViewClient {
 
-    private MainActivity activity;
+    private Context context;
     private AuthAPI authAPI;
     private ProfileAPI profileAPI;
 
 
-    OAuthWebViewClient(MainActivity activity) {
-        this.activity = activity;
-        authAPI = OAuthApp.getRetroBuilder(this.activity).baseUrl(BuildConfig.AUTH_URL)
+    OAuthWebViewClient(Context context) {
+        this.context = context;
+        authAPI = OAuthApp.getRetroBuilder(this.context).baseUrl(BuildConfig.AUTH_URL)
                 .build().create(AuthAPI.class);
-        profileAPI = OAuthApp.getRetroBuilder(this.activity).baseUrl(BuildConfig.PROFILE_URL)
+        profileAPI = OAuthApp.getRetroBuilder(this.context).baseUrl(BuildConfig.PROFILE_URL)
                 .build().create(ProfileAPI.class);
     }
 
@@ -81,7 +82,9 @@ public class OAuthWebViewClient extends WebViewClient {
                     if (response.isSuccessful()) {
 
                         String profileStr = response.body().string();
-                        activity.updateText(profileStr);
+                        if (context instanceof MainActivity) {
+                            ((MainActivity) context).updateText(profileStr);
+                        }
 
                         Log.i("##########", "Result : " + profileStr);
                     }
