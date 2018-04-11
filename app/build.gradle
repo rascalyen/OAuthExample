@@ -14,7 +14,7 @@ android {
         buildConfigField "String", "REDIRECT", redirectUrl
         buildConfigField "String", "AUTH_URL", authBaseUrl
         buildConfigField "String", "PROFILE_URL", profileBaseUrl
-        buildConfigField "String", "GRANT_TYPE", authorization_code
+        buildConfigField "String", "GRANT_TYPE", authorizationCode
     }
     buildTypes {
         release {
